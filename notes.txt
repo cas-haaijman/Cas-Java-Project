@@ -1,0 +1,6 @@
+
+https://blog.payara.fish/getting-started-with-jakarta-ee-9-how-to-create-a-rest-api-with-jakarta-ee-9
+
+https://martinfowler.com/articles/richardsonMaturityModel.html
+
+https://blog.jetbrains.com/idea/2021/02/creating-a-simple-jakarta-persistence-application/
