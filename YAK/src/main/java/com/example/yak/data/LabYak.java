@@ -46,30 +46,31 @@ public class LabYak implements Cloneable {
 
     public Pair<Stock, Optional<LabYak>> ageUp(int daysElapsed) {
 
+        LabYak olderYak;
         try {
-            LabYak olderYak = (LabYak) this.clone();
-
-            double milk = 0;
-            int skins = 0;
-
-            for(double days = 0; days < daysElapsed; days++) {
-                double newAge = ageInDays + days;
-
-                if(newAge == Constants.daysInYakLife) {
-                    return Pair.of(new Stock(milk, skins), Optional.empty());
-                }
-
-                olderYak.setAgeInDays(newAge);
-                skins += olderYak.tryToShave() ? 1 : 0;
-                milk += olderYak.milk();
-            }
-
-            return Pair.of(new Stock(milk, skins), Optional.of(olderYak));
-
+            olderYak = (LabYak) this.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
             return null;
+        } //TODO: EW
+
+        double milk = 0;
+        int skins = 0;
+
+        for(double days = 0; days < daysElapsed; days++) {
+            double newAge = ageInDays + days;
+
+            if(newAge == Constants.daysInYakLife) {
+                return Pair.of(new Stock(milk, skins), Optional.empty());
+            }
+
+            olderYak.setAgeInDays(newAge);
+            skins += olderYak.tryToShave() ? 1 : 0;
+            milk += olderYak.milk();
         }
+
+        return Pair.of(new Stock(milk, skins), Optional.of(olderYak));
+
     }
 
     public double milk() {

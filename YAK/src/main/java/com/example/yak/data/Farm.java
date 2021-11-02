@@ -31,9 +31,7 @@ public class Farm {
             Pair<Stock, Optional<LabYak>> result = yak.ageUp(daysElapsed);
             totalMilk += result.getLeft().getMilk();
             totalSkins += result.getLeft().getSkins();
-            result.getRight().ifPresent(olderYak -> {
-                newHerd.add(olderYak);
-            });
+            result.getRight().ifPresent(newHerd::add);
         }
 
         return new Farm(new Herd(newHerd), new Stock(totalMilk, totalSkins));
