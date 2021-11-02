@@ -74,7 +74,7 @@ public class LabYak implements Cloneable {
     }
 
     public double milk() {
-        return 50 - 0.015 * ageInDays;
+        return 50 - 0.03 * ageInDays;
     }
 
     private boolean canBeShaved() {

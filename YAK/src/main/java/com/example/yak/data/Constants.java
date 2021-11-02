@@ -8,7 +8,7 @@ public class Constants {
     static double daysInYakLife = 1000;
     static double ageOfFirstShave = Constants.daysInYear;
 
-    static private Herd dummyHerd = new Herd(new LinkedList<LabYak>(
+    static private final Herd dummyHerd = new Herd(new LinkedList<>(
             Arrays.asList(
                     new LabYak("Betty-1", 400, Sex.FEMALE),
                     new LabYak("Betty-2", 800, Sex.FEMALE),
