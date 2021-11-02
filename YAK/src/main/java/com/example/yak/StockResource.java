@@ -1,5 +1,6 @@
 package com.example.yak;
 
+import com.example.yak.data.Constants;
 import com.example.yak.data.Farm;
 import com.example.yak.data.LabYak;
 import com.example.yak.data.Stock;
@@ -15,7 +16,9 @@ public class StockResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{intVal}")
     public Stock getStock(@PathParam("intVal") Integer daysElapsed) {
-        Stock stock = Farm.getStockFromElapsedDays(daysElapsed);
+        //TODO: retrieve farm using JPA
+        Farm farm = Constants.dummyFarm;
+        Stock stock = farm.elapse(daysElapsed).getStock();
         return stock;
     }
 }

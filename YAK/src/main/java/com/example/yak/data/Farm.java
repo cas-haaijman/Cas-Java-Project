@@ -1,30 +1,42 @@
 package com.example.yak.data;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.LinkedList;
+import java.util.Optional;
 
 public class Farm {
-//    Herd herd;
-//    Stock stock;
+    Herd herd;
+    Stock stock;
 
-    static private Herd dummyHerd = new Herd(new LinkedList<LabYak>(
-            Arrays.asList(
-                    new LabYak("Betty-1", 400, Sex.FEMALE),
-                    new LabYak("Betty-2", 800, Sex.FEMALE),
-                    new LabYak("Betty-3", 950, Sex.FEMALE)
-                    )
-    ));
-
-    public static Stock getStockFromElapsedDays(int daysElapsed) {
-        //TODO: implement database retrieval of yak data
-        Herd herd = dummyHerd;
-        return herd.milkAndShave(daysElapsed);
+    public Farm(Herd herd, Stock stock) {
+        this.herd = herd;
+        this.stock = stock;
     }
 
-    public static Herd getHerdFromElapsedDays(int daysElapsed) {
-        //TODO: implement database retrieval of yak data
-        Herd herd = dummyHerd;
-        return herd.age(daysElapsed);
+    public Herd getHerd() {
+        return herd;
     }
+
+    public Stock getStock() {
+        return stock;
+    }
+
+    public Farm elapse(int daysElapsed) {
+        double totalMilk = 0;
+        int totalSkins = 0;
+        LinkedList<LabYak> newHerd = new LinkedList<>();
+
+        for (LabYak yak : herd.getHerd()) {
+            Pair<Stock, Optional<LabYak>> result = yak.ageUp(daysElapsed);
+            totalMilk += result.getLeft().getMilk();
+            totalSkins += result.getLeft().getSkins();
+            result.getRight().ifPresent(olderYak -> {
+                newHerd.add(olderYak);
+            });
+        }
+
+        return new Farm(new Herd(newHerd), new Stock(totalMilk, totalSkins));
+    }
+
 }

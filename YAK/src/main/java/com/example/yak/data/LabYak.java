@@ -1,8 +1,10 @@
 package com.example.yak.data;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.Optional;
 
-public class LabYak {
+public class LabYak implements Cloneable {
     String name;
     double ageInDays;
     Sex sex;
@@ -12,49 +14,83 @@ public class LabYak {
         this.name = name;
         this.ageInDays = ageInDays;
         this.sex = sex;
-        ageLastShaved = Float.MAX_VALUE;
+        ageLastShaved = 0;
     }
 
-    public LabYak(String name, double ageInDays, Sex sex, double ageLastShaved) {
+    public LabYak() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
         this.name = name;
-        this.ageInDays = ageInDays;
-        this.sex = sex;
+    }
+
+    public double getAgeInDays() {
+        return ageInDays;
+    }
+
+    public double getAgeLastShaved() {
+        return ageLastShaved;
+    }
+
+    public void setAgeLastShaved(double ageLastShaved) {
         this.ageLastShaved = ageLastShaved;
     }
 
-    public Optional<LabYak> age(int daysElapsed) {
-        if(ageInDays + daysElapsed > Constants.daysInYakLife) {
-            return Optional.empty();
+    public void setAgeInDays(double ageInDays) {
+        this.ageInDays = ageInDays;
+    }
+
+    public Pair<Stock, Optional<LabYak>> ageUp(int daysElapsed) {
+
+        try {
+            LabYak olderYak = (LabYak) this.clone();
+
+            double milk = 0;
+            int skins = 0;
+
+            for(double days = 0; days < daysElapsed; days++) {
+                double newAge = ageInDays + days;
+
+                if(newAge == Constants.daysInYakLife) {
+                    return Pair.of(new Stock(milk, skins), Optional.empty());
+                }
+
+                olderYak.setAgeInDays(newAge);
+                skins += olderYak.tryToShave() ? 1 : 0;
+                milk += olderYak.milk();
+            }
+
+            return Pair.of(new Stock(milk, skins), Optional.of(olderYak));
+
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
         }
-
-        return Optional.of(
-                new LabYak(name, ageInDays + daysElapsed, sex, ageLastShaved)
-        );
     }
 
-    public double milk(int daysElapsed) {
-        double daysDead = Double.max(0, ageInDays + daysElapsed - Constants.daysInYakLife);
-        double daysElapsedBeforeDeath = daysElapsed - daysDead;
-
-        // Formula based on the fact that each day a labYak produces 50-D*0.03 liters of milk
-        return 50 * daysElapsedBeforeDeath - 0.015 * Math.pow(daysElapsedBeforeDeath, 2);
+    public double milk() {
+        return 50 - 0.015 * ageInDays;
     }
 
-    public int shave(int daysElapsed) {
+    private boolean canBeShaved() {
+        return ageInDays - ageLastShaved >= 8 + 0.01 * ageInDays &&
+                ageInDays >= Constants.ageOfFirstShave;
+    }
 
-        double ageIter = Double.max(ageInDays, Constants.ageOfFirstShave);
-        double finalAge = Double.min(ageInDays + daysElapsed, Constants.daysInYakLife);
-        int yield = 0;
-
-        // Each Math.floor(8 + 0.01 * ageCount) days the yak is shaved at the start of the day
-        // until the final age is reached
-        while(finalAge >= ageIter) {
-            ageIter += Math.floor(8 + 0.01 * ageIter);
-            yield++;
+    public boolean tryToShave() {
+        if(canBeShaved()) {
+            ageLastShaved = ageInDays;
+            return true;
         }
-
-        return yield;
+        return false;
     }
 
-
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }
